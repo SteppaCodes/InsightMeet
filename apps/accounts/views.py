@@ -24,6 +24,7 @@ from . models import OneTimePassword, User
 
 tags = ["Auth"]
 
+
 class RegisterUserView(APIView):
     serializer_class = RegisterSerializer
 

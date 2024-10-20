@@ -18,8 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'email',
-            'level',
             ]
 
 
@@ -35,15 +35,19 @@ class RegisterSerializer(serializers.ModelSerializer):
                 'email',
                 'password',
                 'password2',
-                "is_consultant",
+                "is_insightor",
                 "terms_agreement"
             ]
         
     def validate(self, attrs):
         password = attrs.get('password')
         password2 = attrs.get('password2')
+        terms_agreement = attrs.get("terms_agreement")
         if password!= password2:
             raise serializers.ValidationError(_("passwords do not match"))
+        
+        if not terms_agreement:
+            raise serializers.ValidationError(_("you must agree to the terms of service"))
         return attrs
     
     def create(self, validated_data):
@@ -51,7 +55,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             first_name= validated_data['first_name'],
             last_name = validated_data['last_name'],
-            password = validated_data['password']
+            password = validated_data['password'],
+            is_insightor = validated_data['is_insightor'],
+            terms_agreement=validated_data['terms_agreement']
         )
         return user
 
@@ -137,16 +143,16 @@ class SetNewPasswordSerializer(serializers.Serializer):
                     return attrs
                 else:
                     raise AuthenticationFailed('passwords do not match')
-            raise AuthenticationFailed('Link is invali or expired')
+            raise AuthenticationFailed('Link is invalid or expired')
         except Exception as e:
-            raise AuthenticationFailed('Link is expired or invalid')
+            raise AuthenticationFailed('Link is invalid or expired')
         
 
 class LogoutSerializer(serializers.Serializer):
     refresh_token = serializers.CharField()
 
     default_error_messages = {
-        "bad token":("token is expired or invalid")
+        "bad token":("token is invalid or expired")
     }
 
     def validate(self, attrs):
