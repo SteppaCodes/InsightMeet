@@ -38,6 +38,9 @@ class RegisterSerializer(serializers.ModelSerializer):
                 "is_insightor",
                 "terms_agreement"
             ]
+        extra_kwargs = {
+            "is_insightor": {"default":False}
+        }
         
     def validate(self, attrs):
         password = attrs.get('password')

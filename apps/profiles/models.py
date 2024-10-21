@@ -31,7 +31,7 @@ class Education(BaseModel):
     end_date = models.DateField()
 
 
-class Certifications(BaseModel):
+class Certification(BaseModel):
     insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
     issuing_organization = models.CharField(max_length=300)
