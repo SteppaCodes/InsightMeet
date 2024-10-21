@@ -1,6 +1,7 @@
 from apps.profiles.models import Insightor
 from rest_framework.response import Response
 from rest_framework import status
+from apps.common.response import CustomResponses
 
 
 class InsightorMixin:
@@ -8,11 +9,10 @@ class InsightorMixin:
         try:
             return Insightor.objects.get(id=insightor_id)
         except Insightor.DoesNotExist:
-            return Response({
-                    "status":"error",
-                    "message":"Insightor does not exist"
-                    }, status=status.HTTP_404_NOT_FOUND)
-
+            return CustomResponses.error(message="Insightor does not exist",
+                                         status_code=404
+                                         )
+        
     def get_insightors_list(self, filters=None):
         allowed_filters = ["country", "specialization", "experience_years", "hourly_rate"]
 

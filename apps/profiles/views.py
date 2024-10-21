@@ -1,5 +1,4 @@
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_spectacular.utils import extend_schema
@@ -12,6 +11,7 @@ from .serializers import (
     InsightorSerializer
 )
 from apps.common.mixins import InsightorMixin
+from apps.common.response import CustomResponses
 
 class InsightorsListCreateAPIView(APIView, InsightorMixin):
     serializer_class = InsightorSerializer
@@ -22,17 +22,15 @@ class InsightorsListCreateAPIView(APIView, InsightorMixin):
         insightors = self.get_insightors_list(filters)
 
         if not insightors.exists():
-           return Response({
-               "status":"success", 
-               "message": "No consultants found for the given filters"
-               }, status=status.HTTP_200_OK)
+           return CustomResponses.success(
+               message="No consultants found for the given filters"
+           )
 
         serializer = self.serializer_class(insightors, many=True)
-        return Response({
-            "status":"success",
-            "message":"Insightors retreived successfully",
-            "data": serializer.data
-            }, status=status.HTTP_200_OK)
+        return CustomResponses.success(
+            message="Insightors retreived successfully",
+            data=serializer.data
+        )
 
     def post(self, request):
         serializer = self.post_serializer(data=request.data)
@@ -45,12 +43,12 @@ class InsightorsListCreateAPIView(APIView, InsightorMixin):
             user=user
         )
 
-        return Response({
-            "status":"Success", 
-            "message":"Insightor created successfully", 
-            "data":serializer.data
-            }, status=status.HTTP_201_CREATED)
-    
+        return CustomResponses.success(
+            message="Insightor created successfully",
+            data=serializer.data,
+            status_code=201
+        )
+        
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated()]
@@ -68,17 +66,15 @@ class EducationListCreateAPIView(APIView, InsightorMixin):
         
         educations = Education.objects.select_related('insightor').filter(insightor=insightor)
         if not educations.exists():
-            return Response({
-                "status":"success", 
-                "message": f"{insightor.user.full_name} has not added any information concerning their education"
-                }, status=status.HTTP_200_OK)
+            return CustomResponses.success(
+                message=f"{insightor.user.full_name} has not added any information concerning their education"
+                )
 
         serializer = self.serializer_class(educations, many=True)
-        return Response({
-            "status":"success", 
-            "message":f"education info for {insightor.user.full_name} retreived successfully",
-            "data":serializer.data
-            }, status=status.HTTP_200_OK)
+        return CustomResponses.success(
+            message=f"education info for {insightor.user.full_name} retreived successfully",
+            data=serializer.data
+            )
 
     def post(self, request, insightor_id):
         insightor = self.get_insightor(insightor_id)
@@ -89,12 +85,12 @@ class EducationListCreateAPIView(APIView, InsightorMixin):
             insightor=insightor
         )
 
-        return Response({
-            "status":"Success", 
-            "message":"Education information added successfully", 
-            "data":serializer.data
-            }, status=status.HTTP_201_CREATED)
-
+        return CustomResponses.succes(
+            message="Education information added successfully",
+            data = serializer.data,
+            status_code=201
+        )
+        
 
 class CertificationsListCreateAPIView(APIView, InsightorMixin):
     serializer_class = CertificationSerializer
@@ -105,17 +101,15 @@ class CertificationsListCreateAPIView(APIView, InsightorMixin):
         
         certifications = Certification.objects.select_related('insightor').filter(insightor=insightor)
         if not certifications.exists():
-            return Response({
-                "status":"success", 
-                "message": f"{insightor.user.full_name} has not added any certifications"
-                }, status=status.HTTP_200_OK)
-        
+            return CustomResponses.error(
+                message= f"{insightor.user.full_name} has not added any certifications"
+            )
+
         serializer = self.serializer_class(certifications, many=True)
-        return Response({
-            "status":"success", 
-            "message": f"certifications for {insightor.user.full_name} retreived successfully",
-            "data":serializer.data
-            }, status=status.HTTP_200_OK)
+        return CustomResponses.success(
+            message=f"certifications for {insightor.user.full_name} retreived successfully",
+            data=serializer.data
+        )
 
     def post(self, request, insightor_id):
         insightor = self.get_insightor(insightor_id)
@@ -125,9 +119,8 @@ class CertificationsListCreateAPIView(APIView, InsightorMixin):
         serializer.save(
             insightor=insightor
         )
-        return Response({
-            "status":"Success", 
-            "message":"Certification information added successfully", 
-            "data":serializer.data
-            }, status=status.HTTP_201_CREATED)
-    
+        return CustomResponses.success(
+            message="Education information added successfully",
+            data = serializer.data,
+            status_code=201
+        )
