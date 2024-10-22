@@ -30,9 +30,15 @@ class Education(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def __str__(self):
+        return f"{self.insightor.user.full_name} | {self.field_of_study}"
+
 
 class Certification(BaseModel):
     insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
     issuing_organization = models.CharField(max_length=300)
     issue_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.insightor.user.full_name} | {self.name}"
