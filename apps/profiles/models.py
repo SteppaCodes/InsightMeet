@@ -31,7 +31,7 @@ class Education(BaseModel):
     end_date = models.DateField()
 
     def __str__(self):
-        return f"{self.insightor.user.full_name} | {self.field_of_study}"
+        return f"{self.insightor.user.full_name} | {self.degree}: {self.field_of_study}"
 
 
 class Certification(BaseModel):
