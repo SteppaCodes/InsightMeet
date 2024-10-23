@@ -15,6 +15,7 @@ class Insightor(BaseModel):
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     linkedin_url = models.URLField(blank=True, null=True)
     resume = models.FileField(null=True, blank=True)
+    
     facebook_url = models.URLField(blank=True, null=True)
     website_url = models.URLField(blank=True, null=True)
     
