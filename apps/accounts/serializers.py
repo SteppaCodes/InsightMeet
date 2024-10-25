@@ -30,6 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+                "id",
                 'first_name',
                 'last_name',
                 'email',
@@ -41,6 +42,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "is_insightor": {"default":False}
         }
+
+        read_only_fields = ["id"]
         
     def validate(self, attrs):
         password = attrs.get('password')

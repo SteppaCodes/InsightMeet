@@ -15,9 +15,13 @@ class Insightor(BaseModel):
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     linkedin_url = models.URLField(blank=True, null=True)
     resume = models.FileField(null=True, blank=True)
-    
     facebook_url = models.URLField(blank=True, null=True)
     website_url = models.URLField(blank=True, null=True)
+
+    available_days = models.JSONField(default=list)
+    work_start = models.TimeField(max_length=15, null=True, blank=True)
+    work_end = models.TimeField(max_length=15, null=True, blank=True)
+
     
     def __str__(self):
         return f'{self.user.full_name} - {self.title}'

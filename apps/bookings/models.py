@@ -20,7 +20,7 @@ class Booking(BaseModel):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE)
+    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE, related_name="bookings")
     num_hours = models.IntegerField(default=1)
     subject = models.CharField(max_length=300)
     user_needs = models.TextField()
@@ -34,6 +34,8 @@ class Booking(BaseModel):
     def save(self, *args, **Kwargs):
         session_end = self.scheduled_for + timedelta(hours=self.num_hours)
         self.time_range = (self.scheduled_for, session_end)
+
+        self.price = self.insightor.hourly_rate * self.num_hours
         super().save(*args, **Kwargs)
 
     def __str__(self):

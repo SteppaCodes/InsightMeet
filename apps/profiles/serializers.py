@@ -8,7 +8,7 @@ class InsightorSerializer(serializers.ModelSerializer):
         exclude = ["created_at", "updated_at"]
 
 
-class CreateInsightorProfileSerializer(serializers.ModelSerializer):
+class CreateUpdateInsightorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Insightor
         fields = [
@@ -18,6 +18,9 @@ class CreateInsightorProfileSerializer(serializers.ModelSerializer):
             "country",
             "experience_years",
             "available",
+            "available_days",
+            "work_start",
+            "work_end",
             "hourly_rate",
             "resume",
             "linkedin_url",

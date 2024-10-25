@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema
 
 from .models import Insightor, Education, Certification
 from .serializers import (
-    CreateInsightorProfileSerializer,
+    CreateUpdateInsightorSerializer,
     EducationSerializer,
     CertificationSerializer,
     InsightorSerializer
@@ -13,9 +13,10 @@ from .serializers import (
 from apps.common.mixins import InsightorMixin
 from apps.common.response import CustomResponses
 
+
 class InsightorsListCreateAPIView(APIView, InsightorMixin):
     serializer_class = InsightorSerializer
-    post_serializer = CreateInsightorProfileSerializer
+    post_serializer = CreateUpdateInsightorSerializer
 
     def get(self, request):
         filters = request.query_params    
@@ -35,6 +36,7 @@ class InsightorsListCreateAPIView(APIView, InsightorMixin):
     def post(self, request):
         serializer = self.post_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         user = request.user
         user.is_insightor = True
         user.save()
@@ -54,6 +56,29 @@ class InsightorsListCreateAPIView(APIView, InsightorMixin):
             return [IsAuthenticated()]
         elif self.request.method == "GET":
             return [AllowAny()]
+
+
+
+class InsightorDetailAPIView(APIView, InsightorMixin):
+    serializer_class = InsightorSerializer
+    patch_serializer = CreateUpdateInsightorSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, insightor_id):
+        insightor = self.get_insightor(insightor_id)
+        serializer = self.serializer_class(insightor)
+
+        return CustomResponses.success(message="Insightor details retreived successfully",
+                                            data=serializer.data)
+
+
+    def patch(self, request, insightor_id):
+        insightor = self.get_insightor(insightor_id)
+        serializer = self.patch_serializer(insightor, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return CustomResponses.success(message="Insightor profile updated successfully", data=serializer.data)
 
 
 class EducationListCreateAPIView(APIView, InsightorMixin):
