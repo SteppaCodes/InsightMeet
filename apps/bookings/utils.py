@@ -37,7 +37,7 @@ def get_available_insightors(date_time:datetime, session_length:int, user:User) 
     return insightors
 
 def is_insightor_available(date_time:datetime, insightor: Insightor, session_length: int) -> bool:
-    
+
     if not day_of_week in insightor.available_days:
         return False
 
@@ -62,6 +62,7 @@ def is_insightor_available(date_time:datetime, insightor: Insightor, session_len
 def get_available_time_slots(date_time: datetime, insightor: Insightor, session_length: int) -> list[datetime]:
 
     day_of_week = date_time.strftime("%A")
+    
     
     if not day_of_week in insightor.available_days:
         return False
@@ -90,29 +91,22 @@ def get_available_time_slots(date_time: datetime, insightor: Insightor, session_
         booking_start = booking.scheduled_for
         booking_end = calculate_session_end_plus_break(booking.scheduled_for, booking.num_hours)
 
-        while current_time + session_length_delta < booking_start:
+        while current_time + session_length < booking_start:
             potential_start = current_time
-            potential_end = current_time + session_length_delta
+            potential_end = potential_start + session_length
 
-            overlaps = bookings.filter(
-                time_range__overlap=(potential_start, potential_end)
-            )
+            # Ensure the slot doesn't overlap with any existing booking
+            if potential_start > booking_end or potential_end < booking_start:
+                available_slots.append({
+                    "start": potential_start,
+                    "end": potential_end
+                })
 
-            if not overlaps:
-                available_slots.append(
-                    {
-                        "start": potential_start,
-                        "end": potential_end
-                    }
-                )
             current_time = potential_end
 
         current_time = booking_end
 
-    """ 
-        After all bookings, we check the remaining time left to see if they can accomodate a slot of 
-        the session length user specified
-    """
+    # After all bookings, add remaining time slots that can accomodate the session length user specified
     while current_time + session_length_delta < work_end:
         potential_start = current_time
         potential_end = potential_start + session_length_delta
