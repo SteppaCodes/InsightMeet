@@ -38,8 +38,9 @@ def get_available_insightors(date_time:datetime, session_length:int, user:User) 
 
 def is_insightor_available(date_time:datetime, insightor: Insightor, session_length: int) -> bool:
 
-    if not day_of_week in insightor.available_days:
-        return False
+    day_of_week = date_time.strftime("%A").lower()
+    if day_of_week not in insightor.available_days:
+         return False 
 
     start_time = date_time
     end_time = calculate_session_end_plus_break(date_time, session_length)
@@ -60,12 +61,10 @@ def is_insightor_available(date_time:datetime, insightor: Insightor, session_len
     return is_available
 
 def get_available_time_slots(date_time: datetime, insightor: Insightor, session_length: int) -> list[datetime]:
+    day_of_week = date_time.strftime("%A").lower()
 
-    day_of_week = date_time.strftime("%A")
-    
-    
-    if not day_of_week in insightor.available_days:
-        return False
+    if day_of_week not in insightor.available_days:
+         return False 
     
     session_length_delta = timedelta(hours=session_length)
     available_slots = []
@@ -122,7 +121,6 @@ def get_available_time_slots(date_time: datetime, insightor: Insightor, session_
                     })
 
         current_time = potential_end
-
 
     if not len(available_slots) > 0:
         return None
