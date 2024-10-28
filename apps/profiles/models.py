@@ -28,7 +28,7 @@ class Insightor(BaseModel):
 
 
 class Education(BaseModel):
-    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE)
+    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE, related_name="educations")
     institution = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
     field_of_study = models.CharField(max_length=300, null=True, blank=True)
@@ -40,7 +40,7 @@ class Education(BaseModel):
 
 
 class Certification(BaseModel):
-    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE)
+    insightor = models.ForeignKey(Insightor, on_delete=models.CASCADE, related_name="certifications")
     name = models.CharField(max_length=300)
     issuing_organization = models.CharField(max_length=300)
     issue_date = models.DateField()

@@ -8,7 +8,8 @@ from .serializers import (
     CreateUpdateInsightorSerializer,
     EducationSerializer,
     CertificationSerializer,
-    InsightorSerializer
+    InsightorSerializer,
+    InsightorDetailSerializer
 )
 from apps.common.mixins import InsightorMixin
 from apps.common.response import CustomResponses
@@ -60,7 +61,7 @@ class InsightorsListCreateAPIView(APIView, InsightorMixin):
 
 
 class InsightorDetailAPIView(APIView, InsightorMixin):
-    serializer_class = InsightorSerializer
+    serializer_class = InsightorDetailSerializer
     patch_serializer = CreateUpdateInsightorSerializer
     permission_classes = [IsAuthenticated]
 
@@ -89,7 +90,7 @@ class EducationListCreateAPIView(APIView, InsightorMixin):
 
         insightor = self.get_insightor(insightor_id)
         
-        educations = Education.objects.select_related('insightor').filter(insightor=insightor)
+        educations = insightor.educations.all()
         if not educations.exists():
             return CustomResponses.success(
                 message=f"{insightor.user.full_name} has not added any information concerning their education"

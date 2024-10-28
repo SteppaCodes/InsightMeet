@@ -15,6 +15,17 @@ class InsightorMixin:
             return CustomResponses.error(message="Insightor does not exist",
                                          status_code=404
                                          )
+
+    def get_insightor_info(sekf, insightor_id):
+        """
+        Get all details of the insightor.. suitable for profile pages
+        """
+        try:
+            return Insightor.objects.prefetch_related("educations","certifications").get(id=insightor_id)
+        except Insightor.DoesNotExist:
+            return CustomResponses.error(message="Insightor does not exist",
+                                         status_code=404
+                                         )
         
     def get_insightors_list(self, filters: dict=None) -> list[Insightor]:
         allowed_filters = ["country", "specialization", "experience_years", "hourly_rate"]

@@ -8,6 +8,23 @@ class InsightorSerializer(serializers.ModelSerializer):
         exclude = ["created_at", "updated_at"]
 
 
+class InsightorDetailSerializer(serializers.Modelserializer):
+    educations = serializers.SerializerMethodField()
+    certifications = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Insightor
+        fields = "__all__"
+
+    def get_educations(self, obj):
+        qs = obj.educations.all()
+        return EducationSerializer(qs, many=True).data
+    
+    def get_certifications(self, obj):
+        qs = obj.certifications.all()
+        return EducationSerializer(qs, many=True).data
+
+
 class CreateUpdateInsightorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Insightor
@@ -61,3 +78,5 @@ class CertificationSerializer(serializers.ModelSerializer):
         ]
 
         read_only_fields = ["id"]
+
+
